@@ -40,12 +40,8 @@
       "id": "4",
       "name": "Hakkan Parbej Shah",
       "email": "hakkan@example.com",
-      "role": "Librarian",
+      "role": "student",
       "membership": "Admin",
-      "borrowedBooks": [],
-      "issueBook": "0",
-      "issuedDate": "N/A",
-      "returnDate": "N/A",
       "subscriptionDate": "10/01/2023"
     }
   ]
