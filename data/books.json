@@ -1,0 +1,68 @@
+{
+  "books": [
+    {
+      "id": "1",
+      "name": "The Hobbit",
+      "author": "J.R.R. Tolkien",
+      "genre": "Fantasy",
+      "price": "12.99",
+      "publisher": "Houghton Mifflin"
+    },
+    {
+      "id": "2",
+      "name": "1984",
+      "author": "George Orwell",
+      "genre": "Dystopian",
+      "price": "10.50",
+      "publisher": "Secker & Warburg"
+    },
+    {
+      "id": "3",
+      "name": "To Kill a Mockingbird",
+      "author": "Harper Lee",
+      "genre": "Classic Fiction",
+      "price": "11.25",
+      "publisher": "J.B. Lippincott & Co."
+    },
+    {
+      "id": "4",
+      "name": "The Great Gatsby",
+      "author": "F. Scott Fitzgerald",
+      "genre": "Classic",
+      "price": "9.99",
+      "publisher": "Charles Scribner's Sons"
+    },
+    {
+      "id": "5",
+      "name": "Harry Potter and the Sorcerer's Stone",
+      "author": "J.K. Rowling",
+      "genre": "Fantasy",
+      "price": "14.99",
+      "publisher": "Bloomsbury"
+    },
+    {
+      "id": "6",
+      "name": "The Alchemist",
+      "author": "Paulo Coelho",
+      "genre": "Adventure",
+      "price": "13.49",
+      "publisher": "HarperTorch"
+    },
+    {
+      "id": "7",
+      "name": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "genre": "Romance",
+      "price": "8.75",
+      "publisher": "T. Egerton"
+    },
+    {
+      "id": "8",
+      "name": "The Catcher in the Rye",
+      "author": "J.D. Salinger",
+      "genre": "Coming-of-age",
+      "price": "10.99",
+      "publisher": "Little, Brown and Company"
+    }
+  ]
+}

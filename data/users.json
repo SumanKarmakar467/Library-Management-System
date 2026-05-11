@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Sourav Chowdhary",
+      "email": "sourav@example.com",
+      "role": "Student",
+      "membership": "Premium",
+      "borrowedBooks": ["1", "5"],
+      "issueBook": "1",
+      "issuedDate": "04/01/2026",
+      "returnDate": "05/01/2026",
+      "subscriptionDate": "02/03/2025"
+    },
+    {
+      "id": "2",
+      "name": "Pratick Chandra Das",
+      "email": "pratick@example.com",
+      "role": "Teacher",
+      "membership": "Standard",
+      "borrowedBooks": ["2", "4", "7"],
+      "issueBook": "2",
+      "issuedDate": "06/01/2026",
+      "returnDate": "20/01/2026",
+      "subscriptionDate": "15/06/2024"
+    },
+    {
+      "id": "3",
+      "name": "Janmejoy Mahato",
+      "email": "janmejoy@example.com",
+      "role": "Student",
+      "membership": "Standard",
+      "borrowedBooks": ["3", "6"],
+      "issueBook": "3",
+      "issuedDate": "08/01/2026",
+      "returnDate": "22/01/2026",
+      "subscriptionDate": "12/08/2025"
+    },
+    {
+      "id": "4",
+      "name": "Hakkan Parbej Shah",
+      "email": "hakkan@example.com",
+      "role": "Librarian",
+      "membership": "Admin",
+      "borrowedBooks": [],
+      "issueBook": "0",
+      "issuedDate": "N/A",
+      "returnDate": "N/A",
+      "subscriptionDate": "10/01/2023"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "name": "library-management-system",
+  "version": "1.0.0",
+  "description": "This is a library management API Backend for the management of users and the books",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SumanKarmakar467/Library-Management-System.git"
+  },
+  "author": "Suman Karmakar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SumanKarmakar467/Library-Management-System/issues"
+  },
+  "homepage": "https://github.com/SumanKarmakar467/Library-Management-System#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "nodemon": "^3.1.14"
+  }
+}

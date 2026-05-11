@@ -22,11 +22,14 @@ GET: Get a user subscription details by their ID
 
 ## /books
 GET: Get all the books in the system
+
 POST: Add a new book to the system
 
 ## /books{id}
 GET: Get a book by it's ID
+
 PUT: Update a book by it's ID
+
 DELETE: Delete a book it's ID
 
 ## /books/issued
@@ -46,5 +49,11 @@ GET: Get all issued books with their fine amount
 >> If the user misses both renewel & subscription, then the collected amount should be $200
 
 
-## Commands:
+## Commands: installing express and node
 npm init
+npm i express
+node i nodemon  --save-dev
+
+npm run dev  :- for run 
+
+To restore node_modules and package-lock.json --> npm i/ npm install
