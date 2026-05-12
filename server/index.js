@@ -1,5 +1,8 @@
 ﻿const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const usersRouter = require('./routes/users');
 const booksRouter = require('./routes/books');
@@ -7,6 +10,11 @@ const booksRouter = require('./routes/books');
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
 const HOST = '0.0.0.0';
+
+// import database connection file
+const DbConnection = require('./databaseConnection.js')
+
+DbConnection();
 
 const allowedOrigins = (process.env.CORS_ORIGINS || '')
   .split(',')

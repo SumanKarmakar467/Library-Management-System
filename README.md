@@ -1,3 +1,9 @@
+mongodb+srv://karmakarsuman12138_db_user:<db_password>@cluster0.qyld1fz.mongodb.net/?appName=Cluster0
+
+QPt9wozpGspPI4hn
+
+mongodb+srv://karmakarsuman12138_db_user:QPt9wozpGspPI4hn@cluster0.qyld1fz.mongodb.net/?appName=Cluster0
+
 # Library-Management-System
 
     This is a library management API Backend for the management of users and the books
@@ -54,7 +60,21 @@ npm init
 npm i express
 node i nodemon  --save-dev
 
-npm run dev  :- for run 
+npm run dev  :- for run server
+npm start :- for run client  
+
+npm i mongoose :- for mongoose download 
+
+npm i dotenv :- for dot env file
+
+## MVC Architecture
+    >> M: Model ( Structure of our MongoDB )
+    >> V: View ( Frontend )
+    >> C: Controllers ( Brain/Logic of a route )
+
+
+
+
 
 To restore node_modules and package-lock.json --> npm i/ npm install
 ## Frontend Setup (React)

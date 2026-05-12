@@ -1,5 +1,5 @@
-﻿const express = require('express');
-const { users } = require('../data/users.json');
+const express = require('express');
+const { UserModel } = require('../models');
 
 const router = express.Router();
 
@@ -38,50 +38,50 @@ function calcFine(user) {
   return 0;
 }
 
-router.get('/', (req, res) => {
-  res.status(200).json({ success: true, data: users });
+router.get('/', async (req, res) => {
+  const users = await UserModel.find().sort({ createdAt: -1 }).lean();
+  return res.status(200).json({ success: true, data: users });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const user = users.find((each) => each.id === id);
+  const user = await UserModel.findOne({ id }).lean();
   if (!user) {
     return res.status(404).json({ success: false, message: `User Not Found for id: ${id}` });
   }
   return res.status(200).json({ success: true, data: user });
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const { id, name, email, role, membership, subscriptionDate } = req.body;
   if (!id || !name || !email || !role || !membership || !subscriptionDate) {
     return res.status(400).json({ success: false, message: 'Please provide all the required fields' });
   }
 
-  const user = users.find((each) => each.id === id);
-  if (user) {
+  const existing = await UserModel.findOne({ id }).lean();
+  if (existing) {
     return res.status(409).json({ success: false, message: `User Already Exists with id:${id}` });
   }
 
-  users.push({ id, name, email, role, membership, subscriptionDate });
+  await UserModel.create({ id, name, email, role, membership, subscriptionDate });
   return res.status(201).json({ success: true, message: 'User Created Successfully' });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { data } = req.body;
 
-  const user = users.find((each) => each.id === id);
+  const user = await UserModel.findOneAndUpdate({ id }, { $set: data || {} }, { new: true }).lean();
   if (!user) {
     return res.status(404).json({ success: false, message: `User Not Found for id:${id}` });
   }
 
-  const updatedUser = users.map((each) => (each.id === id ? { ...each, ...data } : each));
-  return res.status(200).json({ success: true, data: updatedUser, message: 'User Updated Successfully' });
+  return res.status(200).json({ success: true, data: user, message: 'User Updated Successfully' });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const user = users.find((each) => each.id === id);
+  const user = await UserModel.findOne({ id }).lean();
   if (!user) {
     return res.status(404).json({ success: false, message: `User Not Found for id:${id}` });
   }
@@ -90,15 +90,14 @@ router.delete('/:id', (req, res) => {
     return res.status(400).json({ success: false, message: 'Cannot delete user. User has an issued book.' });
   }
 
-  const index = users.findIndex((each) => each.id === id);
-  if (index >= 0) users.splice(index, 1);
-
+  await UserModel.deleteOne({ id });
+  const users = await UserModel.find().sort({ createdAt: -1 }).lean();
   return res.status(200).json({ success: true, data: users, message: 'User Deleted Successfully' });
 });
 
-router.get('/subscription-details/:id', (req, res) => {
+router.get('/subscription-details/:id', async (req, res) => {
   const { id } = req.params;
-  const user = users.find((each) => each.id === id);
+  const user = await UserModel.findOne({ id }).lean();
 
   if (!user) {
     return res.status(404).json({ success: false, message: `User Not Found for id: ${id}` });

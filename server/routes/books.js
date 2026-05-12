@@ -1,6 +1,5 @@
-﻿const express = require('express');
-const { books } = require('../data/books.json');
-const { users } = require('../data/users.json');
+const express = require('express');
+const { BookModel, UserModel } = require('../models');
 
 const router = express.Router();
 
@@ -61,38 +60,39 @@ function issuedRecord(user, book) {
   };
 }
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
+  const books = await BookModel.find().sort({ createdAt: -1 }).lean();
   res.status(200).json({ success: true, data: books });
 });
 
-router.post('/', (req, res) => {
-  const { id, name, author, genre, price, publisher } = req.body;
-  if (!id || !name || !author || !genre || !price || !publisher) {
+router.post('/', async (req, res) => {
+  const { id, name, author, genre, price, publisher, subscription } = req.body;
+  if (!id || !name || !author || !genre || price == null || !publisher) {
     return res.status(400).json({ success: false, message: 'Please provide all the required fields' });
   }
 
-  const exists = books.find((each) => each.id === id);
+  const exists = await BookModel.findOne({ id }).lean();
   if (exists) {
     return res.status(409).json({ success: false, message: `Book is Already Exists with id:${id}` });
   }
 
-  books.push({ id, name, author, genre, price, publisher });
+  await BookModel.create({ id, name, author, genre, price: Number(price), publisher, subscription });
   return res.status(201).json({ success: true, message: 'Book Added Successfully' });
 });
 
-router.post('/issued', (req, res) => {
+router.post('/issued', async (req, res) => {
   const { userId, bookId, issueDate, returnDate } = req.body;
   if (!userId || !bookId || !issueDate || !returnDate) {
     return res.status(400).json({ success: false, message: 'userId, bookId, issueDate, returnDate are required' });
   }
 
-  const user = users.find((u) => u.id === String(userId));
+  const user = await UserModel.findOne({ id: String(userId) });
   if (!user) return res.status(404).json({ success: false, message: `User Not Found for id:${userId}` });
 
-  const book = books.find((b) => b.id === String(bookId));
+  const book = await BookModel.findOne({ id: String(bookId) }).lean();
   if (!book) return res.status(404).json({ success: false, message: `Book Not Found for id:${bookId}` });
 
-  const alreadyIssued = users.some((u) => String(u.issueBook) === String(bookId));
+  const alreadyIssued = await UserModel.exists({ issueBook: String(bookId) });
   if (alreadyIssued) {
     return res.status(409).json({ success: false, message: 'Book is already issued to another user' });
   }
@@ -102,73 +102,73 @@ router.post('/issued', (req, res) => {
   user.returnDate = returnDate;
   user.borrowedBooks = Array.isArray(user.borrowedBooks) ? user.borrowedBooks : [];
   if (!user.borrowedBooks.includes(String(bookId))) user.borrowedBooks.push(String(bookId));
+  await user.save();
 
-  return res.status(200).json({ success: true, message: 'Book issued successfully', data: issuedRecord(user, book) });
+  return res.status(200).json({ success: true, message: 'Book issued successfully', data: issuedRecord(user.toObject(), book) });
 });
 
-router.get('/issued', (req, res) => {
-  const issuedBooks = users
-    .filter((u) => u.issueBook)
-    .map((u) => {
-      const book = books.find((b) => b.id === String(u.issueBook));
-      if (!book) return null;
-      return issuedRecord(u, book);
-    })
-    .filter(Boolean);
+router.get('/issued', async (req, res) => {
+  const users = await UserModel.find({ issueBook: { $ne: null } }).lean();
+  const issuedBooks = [];
+
+  for (const u of users) {
+    const book = await BookModel.findOne({ id: String(u.issueBook) }).lean();
+    if (book) issuedBooks.push(issuedRecord(u, book));
+  }
 
   return res.status(200).json({ success: true, data: issuedBooks });
 });
 
-router.get('/issued/withFine', (req, res) => {
-  const withFine = users
-    .filter((u) => u.issueBook)
-    .map((u) => {
-      const book = books.find((b) => b.id === String(u.issueBook));
-      if (!book) return null;
-      const record = issuedRecord(u, book);
-      return record.fine > 0 ? record : null;
-    })
-    .filter(Boolean);
+router.get('/issued/withFine', async (req, res) => {
+  const users = await UserModel.find({ issueBook: { $ne: null } }).lean();
+  const withFine = [];
+
+  for (const u of users) {
+    const book = await BookModel.findOne({ id: String(u.issueBook) }).lean();
+    if (!book) continue;
+    const record = issuedRecord(u, book);
+    if (record.fine > 0) withFine.push(record);
+  }
 
   return res.status(200).json({ success: true, data: withFine });
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  const book = books.find((each) => each.id === id);
+  const book = await BookModel.findOne({ id }).lean();
   if (!book) {
     return res.status(404).json({ success: false, message: `Books Not Found for id: ${id}` });
   }
   return res.status(200).json({ success: true, data: book });
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
   const { id } = req.params;
   const { data } = req.body;
 
-  const book = books.find((each) => each.id === id);
+  const book = await BookModel.findOneAndUpdate({ id }, { $set: data || {} }, { new: true }).lean();
   if (!book) {
     return res.status(404).json({ success: false, message: `Book Not Found for id:${id}` });
   }
 
-  const updatedBook = books.map((each) => (each.id === id ? { ...each, ...data } : each));
-  return res.status(200).json({ success: true, data: updatedBook, message: 'Book Updated Successfully' });
+  return res.status(200).json({ success: true, data: book, message: 'Book Updated Successfully' });
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
   const { id } = req.params;
-  const book = books.find((each) => each.id === id);
+  const book = await BookModel.findOne({ id }).lean();
   if (!book) {
     return res.status(404).json({ success: false, message: `Book Not Found for id:${id}` });
   }
 
-  const isIssued = users.some((u) => String(u.issueBook) === String(id));
+  const isIssued = await UserModel.exists({ issueBook: String(id) });
   if (isIssued) {
     return res.status(400).json({ success: false, message: 'Cannot delete book. It is currently issued.' });
   }
 
-  const updatedBooks = books.filter((each) => each.id !== id);
-  return res.status(200).json({ success: true, data: updatedBooks, message: 'Book Deleted Successfully' });
+  await BookModel.deleteOne({ id });
+  const books = await BookModel.find().sort({ createdAt: -1 }).lean();
+  return res.status(200).json({ success: true, data: books, message: 'Book Deleted Successfully' });
 });
 
 module.exports = router;
