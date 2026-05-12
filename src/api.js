@@ -8,14 +8,38 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-  getUsers: () => request('/users'),
+  getUsers: async () => {
+    const res = await request('/users');
+    return Array.isArray(res) ? res : (res?.data || []);
+  },
   createUser: (body) => request('/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
   deleteUser: (id) => request(`/users/${id}`, { method: 'DELETE' }),
-  getSubscriptionDetails: (id) => request(`/users/subscription-details/${id}`),
+  getSubscriptionDetails: async (id) => {
+    const res = await request(`/users/subscription-details/${id}`);
+    return res?.data || res;
+  },
 
-  getBooks: () => request('/books'),
+  getBooks: async () => {
+    const res = await request('/books');
+    return Array.isArray(res) ? res : (res?.data || []);
+  },
   createBook: (body) => request('/books', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }),
   deleteBook: (id) => request(`/books/${id}`, { method: 'DELETE' }),
-  getIssuedBooks: () => request('/books/issued'),
-  getFineBooks: () => request('/books/issued/withFine'),
+  getIssuedBooks: async () => {
+    try {
+      const res = await request('/books/issued');
+      return Array.isArray(res) ? res : (res?.data || []);
+    } catch {
+      const res = await request('/books/issued/for-users');
+      return Array.isArray(res) ? res : (res?.data || []);
+    }
+  },
+  getFineBooks: async () => {
+    try {
+      const res = await request('/books/issued/withFine');
+      return Array.isArray(res) ? res : (res?.data || []);
+    } catch {
+      return [];
+    }
+  },
 };

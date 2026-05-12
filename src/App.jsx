@@ -29,17 +29,53 @@ export default function App() {
   const [loadingIssued, setLoadingIssued] = useState(false); const [loadingFines, setLoadingFines] = useState(false);
   const userToast = useToast(); const bookToast = useToast();
 
-  const fetchUsers = async () => { setLoadingUsers(true); try { const d = await api.getUsers(); setUsers(Array.isArray(d) ? d : []); } catch { setUsers([]); } setLoadingUsers(false); };
-  const fetchBooks = async () => { setLoadingBooks(true); try { const d = await api.getBooks(); setBooks(Array.isArray(d) ? d : []); } catch { setBooks([]); } setLoadingBooks(false); };
-  const fetchIssued = async () => { setLoadingIssued(true); try { const d = await api.getIssuedBooks(); setIssuedBooks(Array.isArray(d) ? d : []); } catch { setIssuedBooks([]); } setLoadingIssued(false); };
-  const fetchFines = async () => { setLoadingFines(true); try { const d = await api.getFineBooks(); setFineBooks(Array.isArray(d) ? d : []); } catch { setFineBooks([]); } setLoadingFines(false); };
+  const fetchUsers = async () => { setLoadingUsers(true); try { const d = await api.getUsers(); setUsers(d); } catch { setUsers([]); } setLoadingUsers(false); };
+  const fetchBooks = async () => { setLoadingBooks(true); try { const d = await api.getBooks(); setBooks(d); } catch { setBooks([]); } setLoadingBooks(false); };
+  const fetchIssued = async () => { setLoadingIssued(true); try { const d = await api.getIssuedBooks(); setIssuedBooks(d); } catch { setIssuedBooks([]); } setLoadingIssued(false); };
+  const fetchFines = async () => { setLoadingFines(true); try { const d = await api.getFineBooks(); setFineBooks(d); } catch { setFineBooks([]); } setLoadingFines(false); };
   const refreshAll = async () => Promise.all([fetchUsers(), fetchBooks(), fetchIssued(), fetchFines()]);
 
   useEffect(() => { refreshAll(); }, []);
 
-  const onAddUser = async (form) => { try { await api.createUser(form); userToast.show('success', 'User created successfully.'); await fetchUsers(); } catch (e) { userToast.show('danger', e.message || 'Failed to create user.'); throw e; } };
+  const onAddUser = async (form) => {
+    try {
+      const payload = {
+        id: String(Date.now()),
+        name: form.name,
+        email: form.email,
+        role: 'student',
+        membership: form.subscription,
+        subscriptionDate: new Date().toISOString(),
+      };
+      await api.createUser(payload);
+      userToast.show('success', 'User created successfully.');
+      await fetchUsers();
+      return true;
+    } catch (e) {
+      userToast.show('danger', e.message || 'Failed to create user.');
+      return false;
+    }
+  };
   const onDeleteUser = async (id) => { try { await api.deleteUser(id); userToast.show('success', 'User deleted.'); await refreshAll(); } catch (e) { userToast.show('danger', e.message || 'Cannot delete user.'); } };
-  const onAddBook = async (form) => { try { await api.createBook(form); bookToast.show('success', 'Book added successfully.'); await fetchBooks(); } catch (e) { bookToast.show('danger', e.message || 'Failed to add book.'); throw e; } };
+  const onAddBook = async (form) => {
+    try {
+      const payload = {
+        id: String(Date.now()),
+        name: form.name,
+        author: form.author,
+        genre: form.genre,
+        price: Number(form.price),
+        publisher: form.publisher || 'Unknown',
+      };
+      await api.createBook(payload);
+      bookToast.show('success', 'Book added successfully.');
+      await fetchBooks();
+      return true;
+    } catch (e) {
+      bookToast.show('danger', e.message || 'Failed to add book.');
+      return false;
+    }
+  };
   const onDeleteBook = async (id) => { try { await api.deleteBook(id); bookToast.show('success', 'Book deleted.'); await refreshAll(); } catch (e) { bookToast.show('danger', e.message || 'Cannot delete book.'); } };
 
   return (
