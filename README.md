@@ -92,3 +92,90 @@ Note:
 - Backend is running on `http://localhost:3000`.
 - React dev server also prefers `3000`, so it will ask to use another port (usually `3001`). Choose `Y`.
 - Then open the shown frontend URL (usually `http://localhost:3001`).
+
+## Deploy on Vercel (Frontend) + Hosted Backend
+
+You can deploy the React frontend on Vercel.
+Your Express backend should be deployed separately (Render/Railway/Fly.io/etc.).
+
+### 1) Prepare backend URL
+Deploy backend first and copy its public URL, for example:
+`https://your-library-api.onrender.com`
+
+### 2) Vercel project settings
+In Vercel, import this repo and set:
+- Build Command: `npm run client:build`
+- Output Directory: `build`
+
+### 3) Add environment variable in Vercel
+Project Settings -> Environment Variables:
+- Key: `REACT_APP_API_BASE_URL`
+- Value: your backend URL (without trailing slash)
+  Example: `https://your-library-api.onrender.com`
+
+### 4) Redeploy
+After adding env var, redeploy the Vercel project.
+
+### 5) Local env
+Create `.env.local` from `.env.example` if needed:
+- `REACT_APP_API_BASE_URL=http://localhost:3000`
+
+### Important
+- Frontend reads API base from `REACT_APP_API_BASE_URL`.
+- CORS must allow your Vercel domain on backend.
+
+## Deploy Backend on Render (Express API)
+
+### Files added for deployment
+- `render.yaml`
+- `index.js` now supports `PORT` and `CORS_ORIGINS`
+
+### Render steps
+1. Push code to GitHub.
+2. In Render -> New -> Web Service -> connect your repo.
+3. Render can auto-detect from `render.yaml`.
+4. Add env var in Render:
+   - `CORS_ORIGINS` = your Vercel frontend URL
+   - Example: `https://your-frontend.vercel.app`
+5. Deploy.
+
+After deploy, your backend URL will look like:
+- `https://library-management-api.onrender.com`
+
+### Connect backend URL to Vercel frontend
+In Vercel Environment Variables:
+- `REACT_APP_API_BASE_URL` = your Render URL
+
+Then redeploy Vercel.
+
+## Split Deployment Structure
+
+This repo now includes:
+- `client/` -> React frontend (deploy to Vercel)
+- `server/` -> Express backend (deploy to Render)
+
+### Deploy Frontend (Vercel)
+- Root Directory: `client`
+- Build Command: `npm run build`
+- Output Directory: `build`
+- Env Var: `REACT_APP_API_BASE_URL=https://<your-render-backend>.onrender.com`
+
+### Deploy Backend (Render)
+- Root Directory: `server`
+- Build Command: `npm install`
+- Start Command: `npm start`
+- Env Var: `CORS_ORIGINS=https://<your-vercel-frontend>.vercel.app`
+
+### Local Run (split mode)
+Terminal 1:
+```bash
+cd server
+npm install
+npm run dev
+```
+Terminal 2:
+```bash
+cd client
+npm install
+npm start
+```

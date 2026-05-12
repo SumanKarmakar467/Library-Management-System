@@ -1,0 +1,38 @@
+﻿const express = require('express');
+const cors = require('cors');
+
+const usersRouter = require('./routes/users');
+const booksRouter = require('./routes/books');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+const allowedOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error('CORS blocked for this origin'));
+    },
+  })
+);
+
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.status(200).json({ message: 'Library API is running' });
+});
+
+app.use('/users', usersRouter);
+app.use('/books', booksRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server is running up at http://localhost:${PORT}`);
+});
