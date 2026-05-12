@@ -5,6 +5,7 @@ const SUBSCRIPTION_COLORS = {
   Basic: { bg: '#E6F1FB', text: '#0C447C' },
   Standard: { bg: '#EAF3DE', text: '#3B6D11' },
   Premium: { bg: '#FAEEDA', text: '#854F0B' },
+  Admin: { bg: '#EFEFF0', text: '#3A3A3A' },
 };
 
 export default function Dashboard({ users, books, issuedBooks, fineBooks }) {
@@ -21,7 +22,11 @@ export default function Dashboard({ users, books, issuedBooks, fineBooks }) {
       <div className='responsive-two-col' style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div style={{ background: 'var(--color-background-primary)', border: '1px solid var(--color-border-tertiary)', borderRadius: 12, padding: '1.25rem' }}>
           <h3 style={{ margin: '0 0 1rem', fontSize: 14, fontWeight: 600, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Recent Users</h3>
-          {users.slice(0, 5).map((u, i) => <div key={u.id || i} style={{ display: 'flex', gap: 10, padding: '8px 0' }}><div style={{ width: 32, height: 32, borderRadius: '50%', background: '#E6F1FB', display: 'grid', placeItems: 'center', fontWeight: 600, color: '#185FA5' }}>{(u.name || u.username || 'U')[0]?.toUpperCase()}</div><div><p style={{ margin: 0, fontSize: 13, fontWeight: 500 }}>{u.name || u.username || `User #${u.id}`}</p><p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-secondary)' }}>{u.email || '—'}</p></div>{(u.subscription || u.membership) ? <span style={{ marginLeft: 'auto', fontSize: 11, padding: '2px 8px', borderRadius: 999, background: SUBSCRIPTION_COLORS[u.subscription || u.membership]?.bg, color: SUBSCRIPTION_COLORS[u.subscription || u.membership]?.text }}>{u.subscription || u.membership}</span> : null}</div>)}
+          {users.slice(0, 5).map((u, i) => {
+            const membership = u.subscription || u.membership;
+            const colors = SUBSCRIPTION_COLORS[membership] || { bg: '#EFEFF0', text: '#3A3A3A' };
+            return <div key={u.id || i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 0' }}><div style={{ width: 32, height: 32, borderRadius: '50%', background: '#E6F1FB', display: 'grid', placeItems: 'center', fontWeight: 600, color: '#185FA5' }}>{(u.name || u.username || 'U')[0]?.toUpperCase()}</div><div><p style={{ margin: 0, fontSize: 13, fontWeight: 500 }}>{u.name || u.username || `User #${u.id}`}</p><p style={{ margin: 0, fontSize: 11, color: 'var(--color-text-secondary)' }}>{u.email || '—'}</p></div>{membership ? <span style={{ marginLeft: 'auto', minWidth: 84, display: 'inline-flex', justifyContent: 'center', alignItems: 'center', fontSize: 11, fontWeight: 500, padding: '5px 10px', borderRadius: 999, background: colors.bg, color: colors.text }}>{membership}</span> : null}</div>;
+          })}
         </div>
         <div style={{ background: 'var(--color-background-primary)', border: '1px solid var(--color-border-tertiary)', borderRadius: 12, padding: '1.25rem' }}>
           <h3 style={{ margin: '0 0 1rem', fontSize: 14, fontWeight: 600, color: 'var(--color-text-secondary)', textTransform: 'uppercase' }}>Recent Books</h3>
