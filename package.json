@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "client:start": "react-scripts start",
+    "client:build": "react-scripts build"
   },
   "repository": {
     "type": "git",
@@ -16,9 +18,24 @@
   "bugs": {
     "url": "https://github.com/SumanKarmakar467/Library-Management-System/issues"
   },
-  "homepage": "https://github.com/SumanKarmakar467/Library-Management-System#readme",
   "dependencies": {
     "express": "^5.2.1",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "cors": "^2.8.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-scripts": "^5.0.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

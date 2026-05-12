@@ -57,3 +57,38 @@ node i nodemon  --save-dev
 npm run dev  :- for run 
 
 To restore node_modules and package-lock.json --> npm i/ npm install
+## Frontend Setup (React)
+
+The React frontend is in the same project root (there is no separate `client` folder).
+
+Frontend files are here:
+- `src/` (App, pages, components, api)
+- `public/index.html` (Tabler Icons CDN added)
+
+### Added dependencies
+- `cors`
+- `react`
+- `react-dom`
+- `react-scripts`
+
+### Added scripts
+- `npm run client:start` -> run React dev server
+- `npm run client:build` -> create production build
+
+### Run the app
+Open terminal in project root:
+
+1. Start backend:
+```bash
+npm run dev
+```
+
+2. Start frontend in a second terminal:
+```bash
+npm run client:start
+```
+
+Note:
+- Backend is running on `http://localhost:3000`.
+- React dev server also prefers `3000`, so it will ask to use another port (usually `3001`). Choose `Y`.
+- Then open the shown frontend URL (usually `http://localhost:3001`).
