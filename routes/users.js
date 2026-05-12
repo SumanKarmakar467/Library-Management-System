@@ -166,13 +166,13 @@ router.delete('/:id', (req, res) => {
 })
 
 /**
- * Route: /users/subscrpition-details/:id
+ * Route: /users/subscription-details/:id
  * Method: GET
  * Description: Get all the Subcription details fo a user by their ID
  * Access: Public 
  * Parameters: ID
 */
-router.get('/subscriptiton-details/:id', (req, res) => {
+router.get('/subscription-details/:id', (req, res) => {
     const {id} = req.params;
 
     // Find the user by ID
@@ -193,16 +193,45 @@ router.get('/subscriptiton-details/:id', (req, res) => {
         else{
             data = new Date();
         }
-        return Math.floor(date.getTime() / (1000 * 60 * 24));
+        let days = Math.floor(date / (1000 * 60 * 60 *24));
+        return days;
     }
 
-    const subscriptionType = (data) => {
+    const subscriptionType = (date) => {
+        if(user.subscriptionType === "Basic"){
+            date = date + 90;
+        }
+        else if(user.subscriptionType === "Standard"){
+            date = date + 180;
+        }
+        else if(user.subscriptionType === "Premium"){
+            date = date + 365;
+        }
+        return date;
+    }
+
+    // Subscription Expiration Calculation 
+    // January 1, 1970 UTC // milliseconds
+
+    let returnDate = getDateInDays(user.returnDate);
+    let currentDate = getDateInDays();
+    let subscriptionDate = getDateInDays(user.subscriptionDate);
+    let subscriptionExpiration = subscriptionType(subscriptionDate);
+
+    const date = {
+        ...user,
+        subscriptionExpired: subscriptionExpiration < currentDate,
+        subscriptionDayLeft: subscriptionExpiration - currentDate,
+        daysLeftForExpiration: returnDate - currentDate,
+        returnDate: returnDate < currentDate ? "Book is overdue" : returnDate,
+        fine: returnDate < currentDate ? subscriptionExpiration <= currentDate ? 200 : 100 : 0
+
 
     }
 
     res.status(200).json({
         success: true,
-        data: issuedBooks
+        data: date,
     });
 })
 
