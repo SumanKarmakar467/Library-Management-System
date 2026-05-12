@@ -1,6 +1,7 @@
 ﻿const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const errorHandler = require('./middlewares/errorHandler');
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
 
 app.use('/users', usersRouter);
 app.use('/books', booksRouter);
+app.use(errorHandler);
 
 app.listen(PORT, HOST, () => {
   console.log(`Server is running up at http://${HOST}:${PORT}`);
