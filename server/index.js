@@ -5,7 +5,8 @@ const usersRouter = require('./routes/users');
 const booksRouter = require('./routes/books');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
+const HOST = '0.0.0.0';
 
 const allowedOrigins = (process.env.CORS_ORIGINS || '')
   .split(',')
@@ -33,6 +34,6 @@ app.get('/', (req, res) => {
 app.use('/users', usersRouter);
 app.use('/books', booksRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server is running up at http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server is running up at http://${HOST}:${PORT}`);
 });
