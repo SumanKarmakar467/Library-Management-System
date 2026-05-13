@@ -1,9 +1,3 @@
-mongodb+srv://karmakarsuman12138_db_user:<db_password>@cluster0.qyld1fz.mongodb.net/?appName=Cluster0
-
-QPt9wozpGspPI4hn
-
-mongodb+srv://karmakarsuman12138_db_user:QPt9wozpGspPI4hn@cluster0.qyld1fz.mongodb.net/?appName=Cluster0
-
 # Library-Management-System
 
     This is a library management API Backend for the management of users and the books
